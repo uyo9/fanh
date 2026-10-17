@@ -20,7 +20,7 @@ type Args struct {
 }
 
 func (Args) Version() string {
-	return "0.0.0"
+	return "1.0.0"
 }
 
 func (Args) Description() string {
