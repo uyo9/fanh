@@ -14,9 +14,10 @@ import (
 )
 
 type Args struct {
-	Key  string `arg:"-k, --key" help:"nhentai API key"`
-	Log  bool   `arg:"-l, --log" help:"with logging"`
-	Sort bool   `arg:"-s, --sort" help:"sorted favourites"`
+	Key   string `arg:"-k, --key" help:"nhentai API key"`
+	Log   bool   `arg:"-l, --log" help:"with logging"`
+	Sort  bool   `arg:"-s, --sort" help:"sorted favourites"`
+	Title bool   `arg:"-t, --title" help:"favourites with titles"`
 }
 
 func (Args) Version() string {
@@ -32,7 +33,8 @@ type Error struct {
 }
 
 type Book struct {
-	ID int `json:"id"`
+	ID    int    `json:"id"`
+	Title string `json:"english_title"`
 }
 
 type Favourite struct {
@@ -54,6 +56,7 @@ func main() {
 
 	page := 1
 	list := make([]int, 0)
+	title := make(map[int]string)
 	client := &http.Client{}
 
 	for {
@@ -79,7 +82,6 @@ func main() {
 			log.Fatalf("failed to read response body: %s\n", err.Error())
 		}
 
-
 		if res.StatusCode != http.StatusOK {
 			var data Error
 			if err := json.Unmarshal(body, &data); err != nil {
@@ -96,6 +98,7 @@ func main() {
 
 		for _, book := range data.Result {
 			list = append(list, book.ID)
+			title[book.ID] = book.Title
 		}
 
 		log.Printf("succeeded in fetching page %d\n", page)
@@ -115,5 +118,12 @@ func main() {
 	for i, id := range list {
 		slist[i] = strconv.Itoa(id)
 	}
-	fmt.Println(strings.Join(slist, ", "))
+
+	if args.Title {
+		for _, id := range list {
+			fmt.Printf("%d: %s\n", id, title[id])
+		}
+	} else {
+		fmt.Println(strings.Join(slist, ", "))
+	}
 }
