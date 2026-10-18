@@ -22,7 +22,7 @@ type Args struct {
 }
 
 func (Args) Version() string {
-	return "1.1.0"
+	return "1.2.0"
 }
 
 func (Args) Description() string {
