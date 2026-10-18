@@ -9,13 +9,14 @@ import (
 	"sort"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/alexflint/go-arg"
 )
 
 type Args struct {
 	Key   string `arg:"-k, --key" help:"nhentai API key"`
-	Log   bool   `arg:"-l, --log" help:"with logging"`
+	Log   bool   `arg:"-l, --log" help:"with logging (request rate limiting warning will NOT be displayed if this is not set)"`
 	Sort  bool   `arg:"-s, --sort" help:"sorted favourites"`
 	Title bool   `arg:"-t, --title" help:"favourites with titles"`
 }
@@ -104,6 +105,11 @@ func main() {
 		log.Printf("succeeded in fetching page %d\n", page)
 
 		if page < data.Length {
+			if data.Length > 15 {
+				log.Println("sleeping for 4 seconds due to request rate limiting")
+				time.Sleep(4 * time.Second)
+			}
+
 			page++
 		} else {
 			break
