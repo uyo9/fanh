@@ -120,16 +120,16 @@ func main() {
 		sort.Ints(list)
 	}
 
-	slist := make([]string, len(list))
-	for i, id := range list {
-		slist[i] = strconv.Itoa(id)
-	}
-
 	if args.Title {
 		for _, id := range list {
 			fmt.Printf("%d: %s\n", id, title[id])
 		}
 	} else {
+		slist := make([]string, len(list))
+		for i, id := range list {
+			slist[i] = strconv.Itoa(id)
+		}
+
 		fmt.Println(strings.Join(slist, ", "))
 	}
 }
